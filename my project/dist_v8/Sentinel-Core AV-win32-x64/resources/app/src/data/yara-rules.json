@@ -1,0 +1,72 @@
+[
+    {
+        "name": "USBAutorunWorm",
+        "pattern": "\\[autorun\\][\\s\\S]*?open\\s*=",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "USB autorun worm — autorun.inf with executable payload"
+    },
+    {
+        "name": "HiddenBatchLauncher",
+        "pattern": "@echo\\s+off[\\s\\S]*?start\\s+/min",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "Hidden batch script launching a minimized process"
+    },
+    {
+        "name": "WindowsCredentialTheft",
+        "pattern": "mimikatz|sekurlsa|lsadump|kerberos::",
+        "flags": "i",
+        "severity": "CRITICAL",
+        "description": "Windows credential theft tool indicators"
+    },
+    {
+        "name": "RansomwareNote",
+        "pattern": "your\\s+files\\s+(have\\s+been|are)\\s+encrypted|pay\\s+.*bitcoin|decrypt.*instructions",
+        "flags": "i",
+        "severity": "CRITICAL",
+        "description": "Ransomware note text patterns"
+    },
+    {
+        "name": "PhishingDocument",
+        "pattern": "enable\\s+(macros|editing|content).*to\\s+(view|see|access)",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "Social engineering text urging macro/content enabling"
+    },
+    {
+        "name": "SuspiciousShortcut",
+        "pattern": "cmd\\.exe\\s+/c|powershell\\s+-w\\s+hidden",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "Shortcut file executing hidden commands"
+    },
+    {
+        "name": "DLLHijack",
+        "pattern": "rundll32\\.exe.*,.*#",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "DLL sideloading via rundll32 ordinal execution"
+    },
+    {
+        "name": "DataExfiltration",
+        "pattern": "ftp\\.exe|tftp|bitsadmin\\s+/transfer",
+        "flags": "i",
+        "severity": "MEDIUM",
+        "description": "Potential data exfiltration via FTP/BITS tools"
+    },
+    {
+        "name": "ServicePersistence",
+        "pattern": "sc\\s+(create|config)\\s+.*binpath",
+        "flags": "i",
+        "severity": "HIGH",
+        "description": "Windows service creation for persistence"
+    },
+    {
+        "name": "ScheduledTaskPersistence",
+        "pattern": "schtasks\\s+/create",
+        "flags": "i",
+        "severity": "MEDIUM",
+        "description": "Scheduled task creation for persistence"
+    }
+]

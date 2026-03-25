@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel-Core AV</title>
+    <meta name="description" content="Advanced USB Antivirus & Endpoint Protection">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ═══ Title Bar ═══ -->
+    <div class="title-bar" id="titleBar">
+        <div class="title-bar-logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <span class="title-bar-text">Sentinel-Core AV</span>
+            <span class="title-bar-version">v1.1-PATCH</span>
+        </div>
+        <div class="title-bar-controls">
+            <button id="btnMinimize" class="title-btn" onclick="window.sentinel.minimize()">
+                <svg width="12" height="12" viewBox="0 0 12 12"><rect y="5" width="12" height="1.5" fill="currentColor"/></svg>
+            </button>
+            <button id="btnMaximize" class="title-btn" onclick="window.sentinel.maximize()">
+                <svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+            <button id="btnClose" class="title-btn title-btn-close" onclick="window.sentinel.close()">
+                <svg width="12" height="12" viewBox="0 0 12 12"><path d="M1 1l10 10M11 1l-10 10" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══ Main Layout ═══ -->
+    <div class="app-layout">
+        <!-- ═══ Sidebar ═══ -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                <button class="nav-btn active" data-panel="dashboard" id="navDashboard">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-panel="devices" id="navDevices">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span>USB Devices</span>
+                    <span class="nav-badge" id="deviceBadge" style="display: none;">0</span>
+                </button>
+                <button class="nav-btn" data-panel="scan" id="navScan">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <span>Scan</span>
+                </button>
+                <button class="nav-btn" data-panel="threats" id="navThreats">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span>Threats</span>
+                    <span class="nav-badge danger" id="threatBadge" style="display: none;">0</span>
+                </button>
+                <button class="nav-btn" data-panel="quarantine" id="navQuarantine">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Quarantine</span>
+                </button>
+                <button class="nav-btn" data-panel="settings" id="navSettings">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Settings</span>
+                </button>
+            </div>
+
+            <!-- Protection Status -->
+            <div class="sidebar-status">
+                <div class="protection-indicator" id="protectionIndicator">
+                    <div class="protection-pulse"></div>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                    </svg>
+                    <span>Protected</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ═══ Main Content ═══ -->
+        <main class="main-content" id="mainContent">
+
+            <!-- ═══ DASHBOARD PANEL ═══ -->
+            <section class="panel active" id="panelDashboard">
+                <div class="panel-header">
+                    <h1>Security Dashboard</h1>
+                    <div class="panel-actions">
+                        <button class="btn btn-ghost" id="btnRefreshDashboard" onclick="App.refreshDashboard(true)">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card" id="statScans" onclick="App.scrollToActivity()" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="stat-icon blue">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="valTotalScans">0</span>
+                            <span class="stat-label">Total Scans</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statFiles" onclick="App.navigateTo('scan')" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="stat-icon green">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="valFilesScanned">0</span>
+                            <span class="stat-label">Files Scanned</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statThreats" onclick="App.navigateTo('threats')" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="stat-icon red">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="valThreatsFound">0</span>
+                            <span class="stat-label">Threats Detected</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statQuarantine" onclick="App.navigateTo('quarantine')" style="cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="stat-icon orange">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="valQuarantined">0</span>
+                            <span class="stat-label">Quarantined</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="dashboard-grid">
+                    <div class="glass-card activity-card">
+                        <h3>Recent Activity</h3>
+                        <div class="activity-list" id="activityList">
+                            <div class="activity-empty">
+                                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                                <p>No recent activity. Plug in a USB drive to start scanning.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card quick-actions-card">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" id="btnQuickScan" onclick="App.triggerQuickScan()">
+                                <div class="action-icon blue">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                </div>
+                                <span>Quick Scan USB</span>
+                            </button>
+                            <button class="action-btn" id="btnBrowseScan" onclick="App.browseScan()">
+                                <div class="action-icon green">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                </div>
+                                <span>Scan Folder</span>
+                            </button>
+                            <button class="action-btn" id="btnExport" onclick="App.exportReport()">
+                                <div class="action-icon purple">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                </div>
+                                <span>Export Report</span>
+                            </button>
+                            <button class="action-btn" id="btnGameMode" onclick="App.toggleGameMode()">
+                                <div class="action-icon cyan" id="gameModeIcon">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+                                </div>
+                                <span>Game Mode</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Mode Banner (hidden by default) -->
+                <div class="game-mode-banner" id="gameModeBanner" style="display: none;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+                    <span>Game Mode Active — Scan intensity reduced for maximum performance</span>
+                    <button class="btn btn-sm btn-ghost" onclick="App.toggleGameMode()">Disable</button>
+                </div>
+                
+                <!-- Bottom Spacer for better scrolling UX -->
+                <div style="height: 60px;"></div>
+            </section>
+
+            <!-- ═══ DEVICES PANEL ═══ -->
+            <section class="panel" id="panelDevices">
+                <div class="panel-header">
+                    <h1>USB Devices</h1>
+                    <button class="btn btn-primary" id="btnRefreshDevices" onclick="App.refreshDevices()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        Refresh
+                    </button>
+                </div>
+                <div class="devices-grid" id="devicesGrid">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <h3>No USB Devices Detected</h3>
+                        <p>Plug in a USB drive to start monitoring and scanning.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SCAN PANEL ═══ -->
+            <section class="panel" id="panelScan">
+                <div class="panel-header">
+                    <h1>Scan</h1>
+                </div>
+
+                <!-- Drag & Drop Zone -->
+                <div class="scan-drop-zone" id="scanDropZone">
+                    <div class="drop-zone-inner">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        <h3>Drag & Drop Files Here</h3>
+                        <p>or select a folder to scan</p>
+                        <button class="btn btn-primary" id="btnSelectFolder" onclick="App.browseScan()">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                            Browse Folder
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scan Progress (hidden by default) -->
+                <div class="scan-progress-card glass-card" id="scanProgressCard" style="display: none;">
+                    <div class="scan-progress-header">
+                        <h3>Scanning in Progress</h3>
+                        <span class="scan-percentage" id="scanPercentage">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="scanProgressBar"></div>
+                    </div>
+                    <div class="scan-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <div class="scan-progress-details" style="margin-top: 0;">
+                            <span id="scanCurrentFile" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Preparing...</span>
+                            <span id="scanFileCount" style="margin-left: 10px; opacity: 0.7;">0 / 0</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-warning btn-sm" id="btnPauseScan" onclick="App.togglePauseScan()">
+                                <svg id="iconPause" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                <svg id="iconResume" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <span id="textPauseScan">Pause</span>
+                            </button>
+                            <button class="btn btn-danger btn-sm" id="btnStopScan" onclick="App.cancelScan()">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"/></svg>
+                                <span>Stop</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Results (hidden by default) -->
+                <div class="scan-results" id="scanResults" style="display: none;">
+                    <div class="scan-results-header">
+                        <h3>Scan Results</h3>
+                        <div class="scan-summary-pills">
+                            <span class="pill clean" id="pillClean">0 Clean</span>
+                            <span class="pill suspicious" id="pillSuspicious">0 Suspicious</span>
+                            <span class="pill malicious" id="pillMalicious">0 Malicious</span>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" id="btnNewScan" onclick="App.clearScanResults()">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            New Scan
+                        </button>
+                    </div>
+                    <div class="results-list" id="resultsList"></div>
+                </div>
+            </section>
+
+            <!-- ═══ THREATS PANEL ═══ -->
+            <section class="panel" id="panelThreats">
+                <div class="panel-header">
+                    <h1>Threat History</h1>
+                    <button class="btn btn-ghost" onclick="App.exportReport()">Export Report</button>
+                </div>
+                <div class="threats-list" id="threatsList">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                        <h3>No Threats Found</h3>
+                        <p>Your system is clean. All scans came back negative.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ QUARANTINE PANEL ═══ -->
+            <section class="panel" id="panelQuarantine">
+                <div class="panel-header">
+                    <h1>Quarantine Vault</h1>
+                    <span class="vault-badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        AES-256 Encrypted
+                    </span>
+                </div>
+                <div class="quarantine-list" id="quarantineList">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <h3>Quarantine Vault Empty</h3>
+                        <p>No files are currently quarantined.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SETTINGS PANEL ═══ -->
+            <section class="panel" id="panelSettings">
+                <div class="panel-header">
+                    <h1>Settings</h1>
+                    <button class="btn btn-primary" id="btnSaveSettings" onclick="App.saveSettings()">Save Changes</button>
+                </div>
+                <div class="settings-sections">
+                    <div class="glass-card settings-group">
+                        <h3>Scan Engine</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Auto-Scan USB</span>
+                                <span class="setting-desc">Automatically scan when a USB drive is inserted</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="settAutoScan" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Scan Depth</span>
+                                <span class="setting-desc">How deep to scan files on each drive</span>
+                            </div>
+                            <select class="select-input" id="settScanDepth">
+                                <option value="quick">Quick (executables only)</option>
+                                <option value="standard">Standard (common files)</option>
+                                <option value="full" selected>Full (all files)</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">VirusTotal API Key</span>
+                                <span class="setting-desc">Optional: Enable cloud-based scanning via VirusTotal</span>
+                            </div>
+                            <input type="password" class="text-input" id="settVTKey" placeholder="Enter your API key">
+                        </div>
+                    </div>
+
+                    <div class="glass-card settings-group">
+                        <h3>Protection</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Real-time Watcher</span>
+                                <span class="setting-desc">Instantly scan files saved to Desktop and Downloads</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="settRealtime">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Auto Game Mode</span>
+                                <span class="setting-desc">Automatically reduce scan intensity when gaming</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="settGameMode" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Quarantine Retention</span>
+                                <span class="setting-desc">Days to keep quarantined files before auto-delete</span>
+                            </div>
+                            <select class="select-input" id="settRetention">
+                                <option value="7">7 days</option>
+                                <option value="14">14 days</option>
+                                <option value="30" selected>30 days</option>
+                                <option value="90">90 days</option>
+                                <option value="365">1 year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="glass-card settings-group">
+                        <h3>Privacy & Notifications</h3>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Notifications</span>
+                                <span class="setting-desc">Show desktop notifications for scan events</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="settNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-label">Privacy Telemetry</span>
+                                <span class="setting-desc">Share anonymized threat data to improve detection (SHA-256 hashed)</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="settTelemetry">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card settings-group about-section">
+                        <h3>About Sentinel-Core AV</h3>
+                        <div class="about-info">
+                            <p><strong>Version:</strong> 1.0.0</p>
+                            <p><strong>Engine:</strong> Multi-layer (Signature + YARA + Heuristic + Arbiter)</p>
+                            <p><strong>Encryption:</strong> AES-256-GCM Quarantine Vault</p>
+                            <p><strong>Protection:</strong> Watchdog + Honeypot + Game Mode</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ═══ Toast Container ═══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ═══ Ransomware Alert Modal ═══ -->
+    <div class="modal-overlay" id="ransomwareModal" style="display: none;">
+        <div class="modal ransomware-modal">
+            <div class="modal-icon danger-pulse">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h2>🚨 Ransomware Attack Detected!</h2>
+            <p id="ransomwareMessage">A canary tripwire file was modified, indicating possible ransomware encryption activity.</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="App.dismissRansomwareAlert()">Acknowledge & Investigate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ USB Interception Modal ═══ -->
+    <div class="modal-overlay" id="usbInterceptionModal" style="display: none;">
+        <div class="modal usb-modal">
+            <div class="modal-icon cyan-pulse">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="6" y="2" width="12" height="10" rx="2" ry="2"/>
+                    <line x1="10" y1="12" x2="10" y2="22"/>
+                    <line x1="14" y1="12" x2="14" y2="22"/>
+                    <path d="M8 22h8"/>
+                </svg>
+            </div>
+            <h2>New USB Drive Detected</h2>
+            <p id="usbInterceptionMessage" style="margin: 12px 0 24px; color: var(--text-secondary);">Drive has been inserted.</p>
+            <div class="modal-actions" style="justify-content: center; gap: 12px;">
+                <button class="btn btn-primary" id="btnUsbQuickScan">⚡ Quick Scan</button>
+                <button class="btn btn-ghost" id="btnUsbFullScan">🔍 Deep Scan</button>
+                <button class="btn btn-ghost" id="btnUsbIgnore">Ignore</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

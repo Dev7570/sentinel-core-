@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+out/
+release/
+build/
+bin/
+obj/
+*.exe
+*.msi
+*.asar
+*.zip
+*.nupkg
+*.7z
+*.rar
+*.dmg
+*.pkg
+*.app
+*.pdb
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env

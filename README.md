@@ -1,2 +1,0 @@
-# sentinel-core-
-antivirus tool 
